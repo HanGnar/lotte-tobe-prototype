@@ -3,13 +3,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
 <style>html,body{overscroll-behavior:none;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+@media (max-width:500px){html,body{background:#fff!important}#sb{display:none!important}}
+#sbg{display:none;position:fixed;left:0;top:0;right:0;z-index:2147483000;pointer-events:none;background:rgba(28,28,32,.52);-webkit-backdrop-filter:blur(26px) saturate(190%);backdrop-filter:blur(26px) saturate(190%);box-shadow:inset 0 -1px 0 rgba(255,255,255,.22)}
 #phone{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea{-webkit-user-select:text;user-select:text}</style>
-<script>window.__V='2b1a7c738f';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='63f0cc9189';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 To-Be 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -2472,11 +2474,17 @@ window.P={otherFor:s=>{SES=s;otherTheaters()},setSes:s=>{SES=s},PEOPLE,openPeopl
 window.addEventListener('DOMContentLoaded',()=>{
   // 홈 화면에서 연 앱(standalone): 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
   const SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  // 상태바 유리 띠: 홈 화면 앱(투명 상태바)에서 상태바 자리를 흐린 유리로 덮어 아이폰 다른 앱처럼 보이게 함
+  const sbg=document.createElement('div');sbg.id='sbg';document.body.appendChild(sbg);
+  const safeTop=()=>{if(window.__SAFE!=null)return window.__SAFE;const p=document.createElement('div');p.style.cssText='position:fixed;top:0;left:0;padding-top:env(safe-area-inset-top,0px)';document.body.appendChild(p);const h=p.offsetHeight;p.remove();return h};
   // 폰(화면 폭 500 이하): 폭에 맞춰 키우고, 높이는 그 폰 화면 비율에 맞춰 늘이거나 줄임. 홈 화면 앱이면 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
   const fit=()=>{const ph=$('#phone'),W=innerWidth,Hh=innerHeight;
-    if(W<=500){const s=W/430,top=SA?54:0,H=Math.max(800,Math.min(1060,Hh/s+top));
-      Object.assign(ph.style,{position:'fixed',left:'0',top:'0',margin:'0',height:H+'px',borderRadius:'0',transformOrigin:'0 0',transform:`translateY(${-top*s}px) scale(${s})`});return}
-    Object.assign(ph.style,{position:'',left:'',top:'',height:'',borderRadius:'',transformOrigin:'',margin:''});
+    if(W<=500){const s=W/430,safe=SA?safeTop():0,H=Math.max(800,Math.min(1060,(Hh-safe)/s+54));
+      // 가짜 상태바(54pt)는 숨기고 앱 머리를 진짜 상태바 아래(safe)에 붙임. 상태바 자리는 유리(blur) 띠로 덮음
+      Object.assign(ph.style,{position:'fixed',left:'0',top:'0',margin:'0',height:H+'px',borderRadius:'0',background:'#fff',transformOrigin:'0 0',transform:`translateY(${safe-54*s}px) scale(${s})`});
+      sbg.style.display=SA?'block':'none';sbg.style.height=safe+'px';return}
+    sbg.style.display='none';
+    Object.assign(ph.style,{position:'',left:'',top:'',height:'',borderRadius:'',background:'',transformOrigin:'',margin:''});
     ph.style.transform=`scale(${Math.min(1,(Hh-24)/932,(W-(W>760?360:0)-24)/430)})`};fit();addEventListener('resize',fit);addEventListener('orientationchange',fit);
   // 핀치 확대 막기(사파리는 user-scalable을 무시하므로 제스처 자체를 막음). 더블탭 확대는 CSS touch-action으로 막음
   ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
