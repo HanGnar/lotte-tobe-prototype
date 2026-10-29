@@ -1,10 +1,16 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="롯데시네마"><meta name="theme-color" content="#ffffff">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-192.png"><link rel="manifest" href="manifest.webmanifest">
+<style>html,body{overscroll-behavior:none;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+#phone{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea{-webkit-user-select:text;user-select:text}</style>
+<script>window.__V='2b1a7c738f';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 To-Be 프로토타입</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
 <style>/* 롯데시네마 앱 As-Is 프로토타입 — 2026-10-22 iPhone 15 Pro Max(430×932pt) 미러링 캡처 기준 치수 */
@@ -2162,7 +2168,7 @@ function openSeat(opt){if(typeof opt!=='object')opt=null;const s=SES,m=D.movies[
   const paint=()=>{const done=SEL.length===need&&need>0;const pr=done?priceOf(s):null;
     el.querySelector('.map')?.classList.toggle('done',done);
     el.querySelectorAll('.st').forEach(t=>{if(t.classList.contains('sold'))return;const on=SEL.includes(t.dataset.seat);t.className='st'+(L?' av':'')+(on?' sel':(done?' dis':''));t.textContent=on||L?t.dataset.seat:''});
-    const O=34,T=(done?589:684)-O;/* To-Be: 아래 정보 영역을 한 줄(34) 올려 '같은 조건으로 다른 영화관 보기' 자리를 만듦 */ss.style.top=T+'px';el.querySelector('.seatwrap').style.bottom=(932-T+29)+'px';el.querySelector('.legend').style.top=(T-27)+'px';el.__syncVP&&el.__syncVP();
+    const O=34,T=(done?589:684)-O;/* To-Be: 아래 정보 영역을 한 줄(34) 올려 '같은 조건으로 다른 영화관 보기' 자리를 만듦 */ss.style.top=T+'px';el.querySelector('.seatwrap').style.bottom=($('#phone').offsetHeight-T+29)+'px';el.querySelector('.legend').style.top=(T-27)+'px';el.__syncVP&&el.__syncVP();
     ss.innerHTML=`<h3 class="s-t" style="${sub?'':'top:21px'}">${sesTitle(s)}</h3>${sub?`<div class="s-sub">${sub}</div>`:''}<div class="divl" style="top:58.5px"></div>
     <button class="olpill" data-other style="top:67px">같은 조건으로 다른 영화관 보기</button>${L?'<button class="olpill r fill" data-view style="top:67px"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M1 7s2.3-4 6-4 6 4 6 4-2.3 4-6 4-6-4-6-4z" fill="none" stroke="#111" stroke-width="1.1"/><circle cx="7" cy="7" r="1.8" fill="none" stroke="#111" stroke-width="1.1"/></svg>좌석 시야 보기</button>':''}
     <div class="s-row" style="top:${(done?74.6:72.6)+O}px"><span>좌석</span>${SEL.length?`<span class="v">${SEL.join(', ')}</span>`:'<span class="ph">좌석을 선택해주세요.</span>'}</div>
@@ -2466,8 +2472,17 @@ window.P={otherFor:s=>{SES=s;otherTheaters()},setSes:s=>{SES=s},PEOPLE,openPeopl
 window.addEventListener('DOMContentLoaded',()=>{
   // 홈 화면에서 연 앱(standalone): 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
   const SA=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-  const fit=()=>{const ph=$('#phone');if(SA&&innerWidth<=500){const s=innerWidth/430;Object.assign(ph.style,{position:'fixed',left:'0',top:'0',margin:'0',transformOrigin:'0 0',transform:`translateY(${-54*s}px) scale(${s})`});return}
-    const k=Math.min(1,(innerHeight-24)/932,(innerWidth-(innerWidth>760?360:0)-24)/430);ph.style.transform=innerWidth<=500?`scale(${innerWidth/430})`:`scale(${k})`;ph.style.margin=innerWidth<=500?`${(932*innerWidth/430-932)/2}px ${(innerWidth-430)/2}px`:''};fit();addEventListener('resize',fit);
+  // 폰(화면 폭 500 이하): 폭에 맞춰 키우고, 높이는 그 폰 화면 비율에 맞춰 늘이거나 줄임. 홈 화면 앱이면 진짜 상태바 아래에 붙이고 가짜 상태바(54pt)는 위로 밀어 숨김
+  const fit=()=>{const ph=$('#phone'),W=innerWidth,Hh=innerHeight;
+    if(W<=500){const s=W/430,top=SA?54:0,H=Math.max(800,Math.min(1060,Hh/s+top));
+      Object.assign(ph.style,{position:'fixed',left:'0',top:'0',margin:'0',height:H+'px',borderRadius:'0',transformOrigin:'0 0',transform:`translateY(${-top*s}px) scale(${s})`});return}
+    Object.assign(ph.style,{position:'',left:'',top:'',height:'',borderRadius:'',transformOrigin:'',margin:''});
+    ph.style.transform=`scale(${Math.min(1,(Hh-24)/932,(W-(W>760?360:0)-24)/430)})`};fit();addEventListener('resize',fit);addEventListener('orientationchange',fit);
+  // 핀치 확대 막기(사파리는 user-scalable을 무시하므로 제스처 자체를 막음). 더블탭 확대는 CSS touch-action으로 막음
+  ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault()));
+  document.addEventListener('touchmove',e=>{if(e.touches.length>1)e.preventDefault()},{passive:false});
+  document.addEventListener('wheel',e=>{if(e.ctrlKey)e.preventDefault()},{passive:false});
+
   buildHome();
   setInterval(()=>{if(setClock()){if(!D.dates.some(d=>d.id===BK.date))BK.date=D.today;if(sheet.classList.contains('on'))renderBK()}},20000);
   if(D.popup){setTimeout(()=>{const p=document.createElement('div');p.className='modal';p.style.alignItems='flex-end';p.innerHTML=D.popup;$('#phone').appendChild(p);p.addEventListener('click',e=>{if(e.target.closest('[data-pop]'))p.remove()})},400)}
