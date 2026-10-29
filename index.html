@@ -10,7 +10,7 @@
 <style>html,body{overscroll-behavior:none;touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 @media (max-width:500px){html,body{background:var(--sbc,#fff)!important}#sb{display:none!important}}
 #phone{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}input,textarea{-webkit-user-select:text;user-select:text}</style>
-<script>window.__V='3b82248b11';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
+<script>window.__V='06341463e2';fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(j=>{if(j.v===window.__V)return;let k='rl'+j.v;try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,1)}catch(e){}location.replace(location.pathname+'?v='+j.v)}).catch(()=>{})</script>
 <title>롯데시네마 To-Be 프로토타입</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Roboto:wght@400;500;700&display=swap">
@@ -974,6 +974,7 @@ button.c{padding:0;background:none;cursor:pointer}
 .vmi{position:relative;margin:0 auto}
 .vms{position:absolute;top:0;height:14px;border-radius:2px;background:#3a3a3a;font:400 9px/14px var(--num);letter-spacing:3px;color:#8c8c8c;text-align:center}
 .vmi i{position:absolute;display:block;border-radius:2px;background:#6b6b6b;cursor:pointer}
+.vmi i::after{content:'';position:absolute;left:-3px;right:-3px;top:-3px;bottom:-3px}   /* 눈에 보이는 크기는 그대로, 누를 수 있는 범위만 사방 3px 넓힘 */
 .vmi i.so{background:#2e2e2e;cursor:default}
 .vmi i.se{background:var(--red)}
 .vmi i.cu{background:#fff;box-shadow:0 0 0 2px var(--red)}
@@ -2074,7 +2075,7 @@ const seatC=a=>[a[1]+a[3]/2,a[2]+a[4]/2];
 function nearAvail(L,id,SO){const s=L.seats.find(a=>a[0]===id)||L.seats[0],[x,y]=seatC(s);let b=null,d=1e9;L.seats.forEach(a=>{if(SO.has(a[0]))return;const [ax,ay]=seatC(a),e=Math.hypot(ax-x,ay-y);if(e<d){d=e;b=a}});return b?b[0]:id}
 // 배치도: 좌석 덩어리 폭을 시트 폭(390)에 맞추되 0.5–1배(넓은 관은 가로로 넘김). 판매 = 어두운 칸, 고른 좌석 = 빨강, 보는 좌석 = 흰 칸
 function vmapHTML(L,SO,sel,cur){const q=L.seats,x0=Math.min(...q.map(a=>a[1])),x1=Math.max(...q.map(a=>a[1]+a[3])),y0=Math.min(...q.map(a=>a[2])),y1=Math.max(...q.map(a=>a[2]+a[4]));
-  const k=Math.max(.5,Math.min(1,390/(x1-x0))),W=(x1-x0)*k,H=(y1-y0)*k;
+  const k=Math.max(.58,Math.min(1.12,450/(x1-x0))),W=(x1-x0)*k,H=(y1-y0)*k;   // 터치하기 쉽게 좌석을 약 15% 키움(가로가 넘으면 옆으로 밀어서 봄)
   return `<div class="vmap"><div class="vmi" style="width:${(W+40).toFixed(0)}px;height:${(H+30).toFixed(0)}px"><span class="vms" style="left:${(20+W*.15).toFixed(1)}px;width:${(W*.7).toFixed(1)}px">SCREEN</span>${q.map(a=>{const c=SO.has(a[0])?'so':a[0]===cur?'cu':sel.includes(a[0])?'se':'';
     return `<i data-vm="${esc(a[0])}" class="${c}" style="left:${(20+(a[1]-x0)*k).toFixed(1)}px;top:${(24+(a[2]-y0)*k).toFixed(1)}px;width:${(a[3]*k-2).toFixed(1)}px;height:${(a[4]*k-2).toFixed(1)}px"></i>`}).join('')}</div></div>`}
 // 2026-10-28 좌석 시야 3D: 블렌더로 만든 관 모델(assets/h3d/<관>.js, build/hall3d_blender.py — 롯데시네마 앱 스페셜관 소개 · 좌석 범례 · 기사 기준)을 좌석 눈높이에서 그림
